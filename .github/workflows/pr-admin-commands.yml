@@ -7,6 +7,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   admin-commands:
@@ -34,6 +35,12 @@ jobs:
 
             if (perm.data.permission !== 'admin') {
               core.info(`User ${actor} is not admin; ignoring command.`);
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: context.payload.issue.number,
+                body: 'Permission not granted.',
+              });
               return;
             }
 
